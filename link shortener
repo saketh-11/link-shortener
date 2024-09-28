@@ -1,0 +1,91 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+class Link {
+    private String originalUrl;
+    private String shortUrl;
+
+    public Link(String originalUrl, String shortUrl) {
+        this.originalUrl = originalUrl;
+        this.shortUrl = shortUrl;
+    }
+
+    public String getOriginalUrl() {
+        return originalUrl;
+    }
+
+    public String getShortUrl() {
+        return shortUrl;
+    }
+}
+
+class LinkShortener {
+    private Map<String, Link> urlMap;
+    private int idCounter;
+
+    public LinkShortener() {
+        urlMap = new HashMap<>();
+        idCounter = 1; // To generate unique IDs
+    }
+
+    private String generateShortUrl() {
+        return "http://short.url/" + Integer.toString(idCounter++);
+    }
+
+    public String shortenUrl(String originalUrl) {
+        String shortUrl = generateShortUrl();
+        Link link = new Link(originalUrl, shortUrl);
+        urlMap.put(shortUrl, link);
+        return shortUrl;
+    }
+
+    public String getOriginalUrl(String shortUrl) {
+        Link link = urlMap.get(shortUrl);
+        return (link != null) ? link.getOriginalUrl() : null;
+    }
+}
+
+public class LinkShortenerApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        LinkShortener shortener = new LinkShortener();
+        int choice;
+
+        do {
+            System.out.println("\nLink Shortener");
+            System.out.println("1. Shorten URL");
+            System.out.println("2. Retrieve Original URL");
+            System.out.println("3. Exit");
+            System.out.print("Choose an option: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // consume newline
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter the original URL: ");
+                    String originalUrl = scanner.nextLine();
+                    String shortUrl = shortener.shortenUrl(originalUrl);
+                    System.out.println("Shortened URL: " + shortUrl);
+                    break;
+                case 2:
+                    System.out.print("Enter the shortened URL: ");
+                    String inputShortUrl = scanner.nextLine();
+                    String retrievedOriginalUrl = shortener.getOriginalUrl(inputShortUrl);
+                    if (retrievedOriginalUrl != null) {
+                        System.out.println("Original URL: " + retrievedOriginalUrl);
+                    } else {
+                        System.out.println("Shortened URL not found.");
+                    }
+                    break;
+                case 3:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        } while (choice != 3);
+
+        scanner.close();
+    }
+}
